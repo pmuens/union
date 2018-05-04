@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker build -t pmuens/union:latest .
+docker run -it -v `PWD`:/app -w /app pmuens/union:latest bash
