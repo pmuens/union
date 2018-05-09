@@ -1,0 +1,12 @@
+[package]
+name = "union"
+version = "0.1.0"
+authors = ["Philipp Muens"]
+
+[lib]
+crate-type = ["staticlib"]
+
+[profile.release]
+panic = "abort"
+
+[dependencies]
