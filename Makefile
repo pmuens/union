@@ -1,3 +1,7 @@
+arch ?= x86_64
+src := src/arch/$(arch)
+dist := target
+
 default: build
 
 .PHONY: default build run clean
@@ -5,7 +9,7 @@ default: build
 run: target/os.iso
 	qemu-system-x86_64 -cdrom target/os.iso -curses
 
-build: target/kernel.bin
+build: $(dist)/kernel.bin
 
 cargo:
 	xargo build --release --target x86_64-unknown-union-gnu
@@ -13,19 +17,19 @@ cargo:
 clean:
 	cargo clean
 
-target/multiboot_header.o: src/asm/multiboot_header.asm
+$(dist)/multiboot_header.o: $(src)/multiboot_header.asm
 	mkdir -p target
-	nasm -f elf64 src/asm/multiboot_header.asm -o target/multiboot_header.o
+	nasm -f elf64 $(src)/multiboot_header.asm -o $(dist)/multiboot_header.o
 
-target/boot.o: src/asm/boot.asm
+$(dist)/boot.o: $(src)/boot.asm
 	mkdir -p target
-	nasm -f elf64 src/asm/boot.asm -o target/boot.o
+	nasm -f elf64 $(src)/boot.asm -o $(dist)/boot.o
 
-target/kernel.bin: target/multiboot_header.o target/boot.o src/asm/linker.ld cargo
-	ld -n -o target/kernel.bin -T src/asm/linker.ld target/multiboot_header.o target/boot.o target/x86_64-unknown-union-gnu/release/libunion.a
+$(dist)/kernel.bin: $(dist)/multiboot_header.o $(dist)/boot.o $(src)/linker.ld cargo
+	ld -n -o $(dist)/kernel.bin -T $(src)/linker.ld $(dist)/multiboot_header.o $(dist)/boot.o $(dist)/$(arch)-unknown-union-gnu/release/libunion.a
 
-target/os.iso: target/kernel.bin src/asm/grub.cfg
-	mkdir -p target/isofiles/boot/grub
-	cp src/asm/grub.cfg target/isofiles/boot/grub
-	cp target/kernel.bin target/isofiles/boot/
-	grub-mkrescue -o target/os.iso target/isofiles
+$(dist)/os.iso: $(dist)/kernel.bin $(src)/grub.cfg
+	mkdir -p $(dist)/isofiles/boot/grub
+	cp $(src)/grub.cfg $(dist)/isofiles/boot/grub
+	cp $(dist)/kernel.bin $(dist)/isofiles/boot/
+	grub-mkrescue -o $(dist)/os.iso $(dist)/isofiles
