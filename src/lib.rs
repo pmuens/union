@@ -1,7 +1,9 @@
 #![feature(lang_items)]
+#![feature(ptr_internals)]
 #![no_std]
 
 extern crate volatile;
+extern crate spin;
 
 mod vga_buffer;
 
