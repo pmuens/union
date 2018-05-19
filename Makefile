@@ -12,7 +12,7 @@ run: target/os.iso
 build: $(dist)/kernel.bin
 
 cargo:
-	xargo build --release --target x86_64-unknown-union-gnu
+	@RUST_TARGET_PATH=$(shell pwd) xargo build --release --target x86_64-unknown-union-gnu
 
 clean:
 	cargo clean
