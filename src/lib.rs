@@ -1,6 +1,10 @@
 #![feature(lang_items)]
 #![no_std]
 
+extern crate volatile;
+
+mod vga_buffer;
+
 #[lang = "eh_personality"]
 extern fn eh_personality() {}
 
@@ -11,9 +15,7 @@ extern fn rust_begin_panic() -> ! {
 
 #[no_mangle]
 pub extern fn kmain() -> ! {
-    unsafe {
-        let vga = 0xb8000 as *mut u64;
-        *vga = 0x2f592f412f4b2f4f
-    };
+    vga_buffer::write("Hello World!");
+
     loop {}
 }
